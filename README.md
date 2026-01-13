@@ -1,6 +1,6 @@
 # Open-Source Release Helpers
 
-Utilities for changelog generation and release creation for open-source projects maintained by Veridise.
+Utilities for changelog generation and release creation for open-source projects.
 
 ## Usage
 
@@ -14,7 +14,7 @@ by this repository are as follows:
 - [`create-release-pr`](.github/workflows/create-release-pr.yml): Creates a pull request to create the release.
 - [`release`](.github/workflows/release.yml): Finalizes the release and cleans up pre-release state.
 
-For an example of usage, refer to the [LLZK project repository](https://github.com/Veridise/llzk-lib).
+For an example of usage, refer to the [LLZK project repository](https://github.com/project-llzk/llzk-lib).
 
 ### Changelog Creation
 
@@ -36,7 +36,7 @@ Arguments:
 If using this repository as a nix flake, the `createChangelogEntry.sh` script will
 be installed as part of the derivation as `create-changelog`, but the package still
 needs to be added to the PATH of the local development shell.
-For example, see the [LLZK project flake](https://github.com/Veridise/llzk-lib/flake.nix).
+For example, see the [LLZK project flake](https://github.com/project-llzk/llzk-lib/blob/main/flake.nix).
 
 #### Manual usage
 
