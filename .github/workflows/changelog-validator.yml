@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           # ${{ github.action_repository }} ends up pointing to actions/checkout@v4
-          repository: Veridise/open-source-release-helpers
+          repository: project-llzk/open-source-release-helpers
           path: release_helpers
           persist-credentials: false
 
