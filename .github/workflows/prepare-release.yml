@@ -149,7 +149,7 @@ jobs:
           git config user.name ${{ github.actor	}}
           git config user.email ${{ github.actor	}}@users.noreply.github.com
           git checkout ${{ env.RELEASE_VERSION }}-pre-release 2>/dev/null || git checkout -b ${{ env.RELEASE_VERSION }}-pre-release
-          git add .
+          git add -- . ':!release_helpers'
           git commit -m "Setup pre-release files for release ${{ env.RELEASE_VERSION }}"
           git push --set-upstream origin ${{ env.RELEASE_VERSION }}-pre-release
 
