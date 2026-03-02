@@ -28,7 +28,7 @@ jobs:
           echo "BRANCH=${BRANCH}" >> $GITHUB_ENV
           echo "name=$BRANCH" >> $GITHUB_OUTPUT
 
-      - name: Check out repository code
+      - name: Check out repository code (pre-release branch)
         uses: actions/checkout@v4
         with:
           ref: ${{ env.BRANCH }}
@@ -60,10 +60,10 @@ jobs:
         run: |
           pip install --upgrade pip && pip install -r $GITHUB_WORKSPACE/release_helpers/requirements.txt
 
-      - name: Update date & append to top of Changelog.md
+      - name: Update date & append to top of CHANGELOG.md
         run: |
-          $GITHUB_WORKSPACE//release_helpers/scripts/prependReleaseChanges.sh
-          $GITHUB_WORKSPACE//release_helpers/scripts/removePreReleaseFiles.sh
+          $GITHUB_WORKSPACE/release_helpers/scripts/prependReleaseChanges.sh
+          $GITHUB_WORKSPACE/release_helpers/scripts/removePreReleaseFiles.sh
           ls -lR changelogs
 
       - name: Commit changes
