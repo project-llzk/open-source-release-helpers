@@ -83,7 +83,7 @@ jobs:
         with:
           submodules: true
           ref: ${{ inputs.checkout_from }}
-          persist-credentials: false
+          persist-credentials: true
 
       - name: Setup env with version from branch name
         if: github.event.pull_request.merged == true
