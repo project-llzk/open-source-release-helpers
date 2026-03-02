@@ -121,7 +121,7 @@ jobs:
           BRANCH_NAME=${{ env.RELEASE_VERSION }}-pre-release
           echo "================================
                 Release changelog generated successfully.
-                Please validate its content bellow.
+                Please validate its content below.
 
 
                 1) If changes **are** required:
