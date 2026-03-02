@@ -99,6 +99,9 @@ jobs:
             });
 
       - name: Auto approve PR
+        env:
+          # Need a PAT because the default token will result in "Can not approve your own pull request"
+          GH_TOKEN: ${{ secrets.RELEASE_APPROVER }}
         run: |
           # give a few seconds for the PR to be available on listing
           sleep 5
@@ -114,6 +117,8 @@ jobs:
           gh pr review --approve ${PR_NUMBER}
 
       - name: Wait for required checks to complete
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           # by default github actions have set -e. But the gh pr check exits with 1 if there are no checks
           set +e
@@ -132,5 +137,7 @@ jobs:
           fi
 
       - name: Merge PR
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh pr merge ${{ env.PR_NUMBER }} --merge
