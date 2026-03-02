@@ -37,8 +37,9 @@ jobs:
       - name: Check out release helper code
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.action_repository }}
-          path: "$GITHUB_WORKSPACE/release_helpers"
+          # ${{ github.action_repository }} ends up pointing to actions/checkout@v4
+          repository: project-llzk/open-source-release-helpers
+          path: release_helpers
           persist-credentials: false
 
       - name: Locate release version
