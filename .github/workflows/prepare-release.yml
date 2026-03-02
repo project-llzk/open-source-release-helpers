@@ -89,6 +89,13 @@ jobs:
         if: github.event.pull_request.merged == true
         run: echo "RELEASE_VERSION=$( echo ${GITHUB_REF_NAME} | cut -d "-" -f 1 )" >> $GITHUB_ENV
 
+      - name: Check out release helper code
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.action_repository }}
+          path: "$GITHUB_WORKSPACE/release_helpers"
+          persist-credentials: false
+
       - name: Setup python
         uses: actions/setup-python@v5
         with:
@@ -99,13 +106,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "latest"
-
-      - name: Check out release helper code
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ github.action_repository }}
-          path: "$GITHUB_WORKSPACE/release_helpers"
-          persist-credentials: false
 
       - name: Install release helpers dependencies
         run: |
