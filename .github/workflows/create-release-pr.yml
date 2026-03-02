@@ -103,12 +103,20 @@ jobs:
           # Need a PAT because the default token will result in "Can not approve your own pull request"
           GH_TOKEN: ${{ secrets.RELEASE_APPROVER }}
         run: |
-          # give a few seconds for the PR to be available on listing
-          sleep 5
-          # the PR is labeled with "release" and the release number. Search using the labels
-          PR_NUMBER=$(gh pr list --label "release" --label ${{ env.RELEASE_VERSION }} | cut -f 1)
+          # Retry up to 5 times waiting for the PR to become available
+          PR_NUMBER=""
+          for i in 1 2 3 4 5; do
+            echo "Attempt ${i}: looking for release PR..."
+            sleep 1
+            PR_NUMBER=$(gh pr list --label "release" --label ${{ env.RELEASE_VERSION }} | cut -f 1)
+            if [ -n "${PR_NUMBER}" ]; then
+              break
+            fi
+            echo "PR not found yet. Waiting..."
+            sleep 4
+          done
           if [ -z "${PR_NUMBER}" ]; then
-            echo "Could not locate the PR number to auto approve. Exiting.."
+            echo "Could not locate the PR number to auto approve after 5 attempts. Exiting."
             exit 1
           fi
           gh pr list --label "release" --label ${{ env.RELEASE_VERSION }}
