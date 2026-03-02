@@ -64,12 +64,15 @@ jobs:
         run: |
           $GITHUB_WORKSPACE/release_helpers/scripts/prependReleaseChanges.sh
           $GITHUB_WORKSPACE/release_helpers/scripts/removePreReleaseFiles.sh
-          ls -lR changelogs
+          ls -lR changelogs || echo "changelogs directory no longer exists"
 
       - name: Commit changes
         id: commit
         run: |
-          git commit -am "Finalize release ${{ env.RELEASE_VERSION }}"
+          # If the scripts above made no changes, then there is no need to commit.
+          # This can happen if the pre-release branch was already prepped for release
+          # but the workflow did not complete and is run again.
+          git diff --cached --quiet && git diff --quiet || git commit -am "Finalize release ${{ env.RELEASE_VERSION }}"
           git push
 
       - name: Create Pull Request

@@ -5,6 +5,11 @@ set -e
 CHANGELOG_MARKDOWN="${CHANGELOG_MARKDOWN:-"CHANGELOG.md"}"
 RELEASE_MARKDOWN="${RELEASE_MARKDOWN:-"changelogs/PENDING.md"}"
 
+if [ ! -f "${RELEASE_MARKDOWN}" ]; then
+    echo "${RELEASE_MARKDOWN} not found, skipping (already processed?)"
+    exit 0
+fi
+
 # Replace heading with current date
 RELEASE_HEADING=$(echo $(cat $RELEASE_MARKDOWN | head -1 | cut -d "-" -f 1) - $(date '+%Y-%m-%d'))
 echo $RELEASE_HEADING > temp.md
