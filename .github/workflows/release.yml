@@ -50,12 +50,6 @@ jobs:
           submodules: true
           persist-credentials: false
 
-      - name: Setup python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip" # caching pip dependencies
-
       - name: Check out release helper code
         uses: actions/checkout@v4
         with:
@@ -63,6 +57,12 @@ jobs:
           repository: project-llzk/open-source-release-helpers
           path: release_helpers
           persist-credentials: false
+
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip" # caching pip dependencies
 
       - name: Install release helpers python dependencies
         run: |
