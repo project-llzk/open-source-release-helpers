@@ -152,7 +152,7 @@ jobs:
           if [ $exit_code -ne 0 ]
           then
             error_text=$(cat error.txt)
-            if [[ ! "$error_text" == *"no required checks reported"* ]]; then
+            if [[ ! "$error_text" == *"no checks reported"* ]]; then
               exit $exit_code
             fi
           fi
