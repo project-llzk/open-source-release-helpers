@@ -13,7 +13,6 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: endsWith(github.head_ref, 'pre-release') && github.event.pull_request.merged == true
     outputs:
       status: ${{ steps.status-check.outputs.status }}
       version: ${{ steps.version.outputs.version }}
