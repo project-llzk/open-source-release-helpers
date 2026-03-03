@@ -80,7 +80,7 @@ jobs:
           tag: ${{ env.RELEASE_VERSION }}
           bodyFile: ${{ env.RELEASE_CHANGES }}
           commit: ${{ env.BRANCH }}
-          persist-credentials: false
+          token: ${{ secrets.RELEASE_APPROVER }}
 
       - name: Delete pre-release branch
         run: git push -d origin ${{ env.BRANCH }}
