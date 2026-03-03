@@ -159,6 +159,7 @@ jobs:
 
       - name: Merge PR
         env:
-          GH_TOKEN: ${{ github.token }}
+          # Need a PAT because the default token will not allow other workflows to trigger
+          GH_TOKEN: ${{ secrets.RELEASE_APPROVER }}
         run: |
           gh pr merge ${{ env.PR_NUMBER }} --squash
