@@ -154,7 +154,9 @@ jobs:
           if [ $exit_code -ne 0 ]
           then
             error_text=$(cat error.txt)
-            if [[ ! "$error_text" == *"no checks reported"* ]]; then
+            # TODO: doesn't seem right. There should be required checks that must pass before merging. In that case,
+            # then we should be able to just add `--auto` to the `gh pr merge` command and avoid this manual check.
+            if [[ ! "$error_text" == *"no checks reported"* ]] && [[ ! "$error_text" == *"no required checks reported"* ]]; then
               exit $exit_code
             fi
           fi
