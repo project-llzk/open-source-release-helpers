@@ -79,7 +79,7 @@ jobs:
         with:
           tag: ${{ env.RELEASE_VERSION }}
           bodyFile: ${{ env.RELEASE_CHANGES }}
-          commit: ${{ env.BRANCH }}
+          commit: ${{ github.sha }}
           token: ${{ secrets.RELEASE_APPROVER }}
 
       - name: Delete pre-release branch
