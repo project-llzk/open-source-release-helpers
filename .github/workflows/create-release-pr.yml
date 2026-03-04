@@ -78,6 +78,8 @@ jobs:
       - name: Create Pull Request
         uses: actions/github-script@v7
         with:
+          # Must use PAT from another account because the default token will not allow other workflows to trigger
+          github-token: ${{ secrets.RELEASE_APPROVER }}
           script: |
             const { repo, owner } = context.repo;
             // Check if a PR already exists for this branch to make this step idempotent
@@ -113,8 +115,8 @@ jobs:
 
       - name: Auto approve PR
         env:
-          # Need a PAT because the default token will result in "Can not approve your own pull request"
-          GH_TOKEN: ${{ secrets.RELEASE_APPROVER }}
+          # Must use default token to avoid "Can not approve your own pull request"
+          GH_TOKEN: ${{ github.token }}
         run: |
           # Retry up to 5 times waiting for the PR to become available
           PR_NUMBER=""
@@ -159,7 +161,7 @@ jobs:
 
       - name: Merge PR
         env:
-          # Need a PAT because the default token will not allow other workflows to trigger
+          # Must use PAT from another account because the default token will not allow other workflows to trigger
           GH_TOKEN: ${{ secrets.RELEASE_APPROVER }}
         run: |
           gh pr merge ${{ env.PR_NUMBER }} --squash
