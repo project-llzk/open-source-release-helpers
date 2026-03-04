@@ -48,7 +48,7 @@ jobs:
           ref: ${{ env.BRANCH }}
           fetch-depth: 0
           submodules: true
-          persist-credentials: false
+          persist-credentials: true
 
       - name: Check out release helper code
         uses: actions/checkout@v4
@@ -81,6 +81,7 @@ jobs:
           bodyFile: ${{ env.RELEASE_CHANGES }}
           commit: ${{ github.sha }}
           token: ${{ secrets.RELEASE_APPROVER }}
+          skipIfReleaseExists: true # make idempotent in case of retries
 
       - name: Delete pre-release branch
         run: git push -d origin ${{ env.BRANCH }}
