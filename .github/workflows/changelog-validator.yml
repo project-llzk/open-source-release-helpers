@@ -1,17 +1,24 @@
 name: Changelog validator
 on:
   workflow_call:
+    inputs:
+      branch_name:
+        description: "The branch name to validate (pass github.head_ref from the caller)"
+        required: true
+        type: string
 
 jobs:
   changelog-validate:
     runs-on: ubuntu-latest
+    env:
+      BRANCH_NAME: "${{ inputs.branch_name }}"
     steps:
       - name: Check if run on pre-release branch
         id: check_pre_release_branch
         run: |
-          echo "Checking if the github.ref_name (${{ github.ref_name }}) matches pre-release branch..."
+          echo "Checking if (${BRANCH_NAME}) matches pre-release branch..."
           skip_validation=0
-          if [[ ${{ github.ref_name }} =~ v[0-9]+\.[0-9]+\.[0-9]+-pre-release$ ]]; then
+          if [[ "${BRANCH_NAME}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-pre-release$ ]]; then
               skip_validation=1
               echo "Changelog validator is skipped. We are running on a pre-release branch" >> $GITHUB_STEP_SUMMARY
           fi
