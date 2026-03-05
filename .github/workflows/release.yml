@@ -85,9 +85,3 @@ jobs:
 
       - name: Delete pre-release branch
         run: git push -d origin ${{ env.BRANCH }}
-
-      - name: check status
-        if: always()
-        id: status-check
-        run: |
-          echo "status=${{ job.status }}" >> $GITHUB_ENV

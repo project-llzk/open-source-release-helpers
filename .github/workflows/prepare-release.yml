@@ -152,10 +152,3 @@ jobs:
           git add -- . ':!release_helpers'
           git commit -m "Setup pre-release files for release ${{ env.RELEASE_VERSION }}"
           git push --set-upstream origin ${{ env.RELEASE_VERSION }}-pre-release
-
-      - name: check status
-        if: always()
-        id: status-check
-        run: |
-          STATUS=${{ job.status }}
-          echo "STATUS=${STATUS}" >> $GITHUB_ENV
