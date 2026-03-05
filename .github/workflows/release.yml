@@ -85,3 +85,21 @@ jobs:
 
       - name: Delete pre-release branch
         run: git push -d origin ${{ env.BRANCH }}
+
+      - name: Write success summary
+        run: |
+          echo "================================
+                Release **${{ env.RELEASE_VERSION }}** created successfully.
+
+                * [Release ${{ env.RELEASE_VERSION }}](${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ env.RELEASE_VERSION }})
+
+                ==================================" | sed 's/^[[:space:]]*//g' >> $GITHUB_STEP_SUMMARY
+
+      - name: Write failure summary
+        if: failure()
+        run: |
+          echo "==================================
+                ERROR: Failed to create release ${{ env.RELEASE_VERSION }}.
+                Check action output and/or contact @project-llzk/maintainers team for clarifications.
+
+                ==================================" | sed 's/^[[:space:]]*//g' >> $GITHUB_STEP_SUMMARY

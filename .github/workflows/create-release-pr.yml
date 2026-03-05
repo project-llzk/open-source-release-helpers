@@ -146,3 +146,22 @@ jobs:
         run: |
           # auto merge PR after all required workflows pass
           gh pr merge ${{ env.PR_NUMBER }} --auto --squash
+
+      - name: Write success summary
+        run: |
+          echo "================================
+                Release PR created successfully.
+                Please review and monitor the PR to ensure required checks pass and it is auto-merged.
+
+                * [Release PR #${{ env.PR_NUMBER }}](${{ github.server_url }}/${{ github.repository }}/pull/${{ env.PR_NUMBER }})
+
+                ==================================" | sed 's/^[[:space:]]*//g' >> $GITHUB_STEP_SUMMARY
+
+      - name: Write failure summary
+        if: failure()
+        run: |
+          echo "==================================
+                ERROR: Failed to create release PR.
+                Check action output and/or contact @project-llzk/maintainers team for clarifications.
+
+                ==================================" | sed 's/^[[:space:]]*//g' >> $GITHUB_STEP_SUMMARY

@@ -33,3 +33,29 @@ jobs:
           git push
           git tag ${{ env.RC_TAG }}
           git push origin ${{ env.RC_TAG }}
+
+      - name: Write success summary
+        run: |
+          echo "================================
+                Release candidate **${{ env.RC_TAG }}** created successfully.
+                Please validate the release candidate before proceeding.
+
+                1) If issues **are** found:
+                  * Open PRs against the **${{ github.ref_name }}** branch to address the issues
+                  * Trigger the [Create Release Candidate](${{ github.server_url }}/${{ github.repository }}/actions/workflows/create-release-candidate.yml) workflow again
+                    **_Note:_** Run the workflow from branch **${{ github.ref_name }}**
+                  * Perform the same actions as (2)
+                2) Once ready to release:
+                  * Trigger the [Create Release PR](${{ github.server_url }}/${{ github.repository }}/actions/workflows/create-release-pr.yml) workflow
+                    **_Note:_** Run the workflow from tag **${{ env.RC_TAG }}** or from branch **${{ github.ref_name }}**
+
+                ==================================" | sed 's/^[[:space:]]*//g' >> $GITHUB_STEP_SUMMARY
+
+      - name: Write failure summary
+        if: failure()
+        run: |
+          echo "==================================
+                ERROR: Failed to create release candidate.
+                Check action output and/or contact @project-llzk/maintainers team for clarifications.
+
+                ==================================" | sed 's/^[[:space:]]*//g' >> $GITHUB_STEP_SUMMARY

@@ -123,7 +123,6 @@ jobs:
                 Release changelog generated successfully.
                 Please validate its content below.
 
-
                 1) If changes **are** required:
                   * Update the [PENDING.md](${{ github.server_url }}/${{ github.repository }}/tree/${BRANCH_NAME}/changelogs/PENDING.md)
                   * Perform the same actions as (2)
@@ -134,12 +133,12 @@ jobs:
                 ==================================" | sed 's/^[[:space:]]*//g' >> $GITHUB_STEP_SUMMARY
           cat changelogs/PENDING.md >> $GITHUB_STEP_SUMMARY
 
-      - name: Failure on release changelog creation
+      - name: Write failure summary
         if: failure()
         run: |
           echo "==================================
                 ERROR: Failed to create Release changelog.
-                Check action output and/or contact ops team for clarifications.
+                Check action output and/or contact @project-llzk/maintainers team for clarifications.
 
                 ==================================" | sed 's/^[[:space:]]*//g' >> $GITHUB_STEP_SUMMARY
 
