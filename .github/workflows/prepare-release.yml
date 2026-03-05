@@ -83,6 +83,9 @@ jobs:
         with:
           submodules: true
           ref: ${{ inputs.checkout_from }}
+          # The release bot must create the pre-release branch and push the commits
+          # to satisfy the branch protection rules.
+          token: ${{ secrets.RELEASE_APPROVER }}
           persist-credentials: true
 
       - name: Setup env with version from branch name

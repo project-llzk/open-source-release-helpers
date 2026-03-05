@@ -48,6 +48,9 @@ jobs:
           ref: ${{ env.BRANCH }}
           fetch-depth: 0
           submodules: true
+          # The release bot must delete the pre-release branch
+          # to satisfy the branch protection rules.
+          token: ${{ secrets.RELEASE_APPROVER }}
           persist-credentials: true
 
       - name: Check out release helper code

@@ -10,6 +10,8 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v4
         with:
+          # The release bot must push the commits to satisfy the branch protection rules.
+          token: ${{ secrets.RELEASE_APPROVER }}
           persist-credentials: true
 
       - name: Create pre-release tag
