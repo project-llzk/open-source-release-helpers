@@ -107,6 +107,12 @@ jobs:
                   '[actions/github-script](https://github.com/actions/github-script).'
                 ].join('\n')
               });
+              github.rest.issues.addAssignees({
+                owner,
+                repo,
+                issue_number: result.data.number,
+                assignees: ['${{ github.actor }}']
+              });
               github.rest.issues.addLabels({
                 owner,
                 repo,
