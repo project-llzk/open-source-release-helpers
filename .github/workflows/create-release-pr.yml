@@ -139,31 +139,10 @@ jobs:
           echo "Release PR: ${PR_NUMBER}"
           gh pr review --approve ${PR_NUMBER}
 
-      - name: Wait for required checks to complete
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          # by default github actions have set -e. But the gh pr check exits with 1 if there are no checks
-          set +e
-          gh pr checks --watch --fail-fast --required ${{ env.PR_NUMBER }} 2>error.txt
-          exit_code=$?
-          set -e
-          echo "*** ERROR OUTPUT ***"
-          cat error.txt
-          echo "********************"
-          if [ $exit_code -ne 0 ]
-          then
-            error_text=$(cat error.txt)
-            # TODO: doesn't seem right. There should be required checks that must pass before merging. In that case,
-            # then we should be able to just add `--auto` to the `gh pr merge` command and avoid this manual check.
-            if [[ ! "$error_text" == *"no checks reported"* ]] && [[ ! "$error_text" == *"no required checks reported"* ]]; then
-              exit $exit_code
-            fi
-          fi
-
       - name: Merge PR
         env:
           # Must use PAT from another account because the default token will not allow other workflows to trigger
           GH_TOKEN: ${{ secrets.RELEASE_APPROVER }}
         run: |
-          gh pr merge ${{ env.PR_NUMBER }} --squash
+          # auto merge PR after all required workflows pass
+          gh pr merge ${{ env.PR_NUMBER }} --auto --squash
