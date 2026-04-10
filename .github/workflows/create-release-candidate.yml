@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # The release bot must push the commits to satisfy the branch protection rules.
           token: ${{ secrets.RELEASE_APPROVER }}

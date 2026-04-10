@@ -26,15 +26,15 @@ jobs:
 
       - name: Check out repository code
         if: ${{ steps.check_pre_release_branch.outputs.skip_validation == 0 }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
 
       - name: Check out release helper code
         if: ${{ steps.check_pre_release_branch.outputs.skip_validation == 0 }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
-          # ${{ github.action_repository }} ends up pointing to actions/checkout@v4
+          # ${{ github.action_repository }} ends up pointing to actions/checkout
           repository: project-llzk/open-source-release-helpers
           path: release_helpers
           persist-credentials: false
