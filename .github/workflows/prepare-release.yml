@@ -27,7 +27,7 @@ jobs:
       skipped: ${{ steps.skipped.outputs.SKIPPED }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         if: github.event.pull_request.merged == false
         with:
           fetch-depth: 0
@@ -79,7 +79,7 @@ jobs:
       RELEASE_VERSION: ${{ inputs.release_version }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: true
           ref: ${{ inputs.checkout_from }}
@@ -93,9 +93,9 @@ jobs:
         run: echo "RELEASE_VERSION=$( echo ${GITHUB_REF_NAME} | cut -d "-" -f 1 )" >> $GITHUB_ENV
 
       - name: Check out release helper code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
-          # ${{ github.action_repository }} ends up pointing to actions/checkout@v4
+          # ${{ github.action_repository }} ends up pointing to actions/checkout
           repository: project-llzk/open-source-release-helpers
           path: release_helpers
           persist-credentials: false

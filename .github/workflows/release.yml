@@ -18,7 +18,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -43,7 +43,7 @@ jobs:
           echo "version=${{ env.RELEASE_VERSION }}" >> $GITHUB_OUTPUT
 
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ env.BRANCH }}
           fetch-depth: 0
@@ -54,9 +54,9 @@ jobs:
           persist-credentials: true
 
       - name: Check out release helper code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
-          # ${{ github.action_repository }} ends up pointing to actions/checkout@v4
+          # ${{ github.action_repository }} ends up pointing to actions/checkout
           repository: project-llzk/open-source-release-helpers
           path: release_helpers
           persist-credentials: false

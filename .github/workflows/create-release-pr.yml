@@ -11,7 +11,7 @@ jobs:
       branch: ${{ steps.branch_name.outputs.name }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -29,7 +29,7 @@ jobs:
           echo "name=$BRANCH" >> $GITHUB_OUTPUT
 
       - name: Check out repository code (pre-release branch)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ env.BRANCH }}
           # The release bot must push the commits to satisfy the branch protection rules.
@@ -37,9 +37,9 @@ jobs:
           persist-credentials: true
 
       - name: Check out release helper code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
-          # ${{ github.action_repository }} ends up pointing to actions/checkout@v4
+          # ${{ github.action_repository }} ends up pointing to actions/checkout
           repository: project-llzk/open-source-release-helpers
           path: release_helpers
           persist-credentials: false
