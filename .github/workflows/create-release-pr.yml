@@ -78,7 +78,7 @@ jobs:
           git push
 
       - name: Create Pull Request
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           # Must use PAT from another account because the default token will not allow other workflows to trigger
           github-token: ${{ secrets.RELEASE_APPROVER }}
