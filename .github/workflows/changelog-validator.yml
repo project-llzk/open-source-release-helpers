@@ -46,14 +46,14 @@ jobs:
 
       - name: Setup python
         if: ${{ steps.check_pre_release_branch.outputs.skip_validation == 0 }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
           cache: "pip" # caching pip dependencies
 
       - name: Setup node
         if: ${{ steps.check_pre_release_branch.outputs.skip_validation == 0 }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: latest
 
