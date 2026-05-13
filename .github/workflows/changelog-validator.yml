@@ -53,7 +53,7 @@ jobs:
 
       - name: Setup node
         if: ${{ steps.check_pre_release_branch.outputs.skip_validation == 0 }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: latest
 
