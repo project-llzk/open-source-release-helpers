@@ -92,8 +92,15 @@ jobs:
               base: 'main',
               state: 'open'
             });
+
+            let prNumber;
+            if (existing.data.length > 1) {
+              core.setFailed(`Expected at most one open release PR for ${{ env.BRANCH }}, found ${existing.data.length}.`);
+              return;
+            }
+
             if (existing.data.length === 1) {
-              let prNumber = existing.data[0].number;
+              prNumber = existing.data[0].number;
               console.log(`PR already exists: #${prNumber}`);
             } else {
               const result = await github.rest.pulls.create({
@@ -107,19 +114,26 @@ jobs:
                   '[actions/github-script](https://github.com/actions/github-script).'
                 ].join('\n')
               });
-              github.rest.issues.addAssignees({
+              prNumber = result.data.number;
+            }
+
+            try {
+              await github.rest.issues.addAssignees({
                 owner,
                 repo,
-                issue_number: result.data.number,
+                issue_number: prNumber,
                 assignees: ['${{ github.actor }}']
               });
-              github.rest.issues.addLabels({
-                owner,
-                repo,
-                issue_number: result.data.number,
-                labels: ['release', '${{ env.RELEASE_VERSION }}']
-              });
+            } catch (error) {
+              core.warning(`Could not assign release PR #${prNumber} to ${{ github.actor }}: ${error.message}`);
             }
+
+            await github.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number: prNumber,
+              labels: ['release', '${{ env.RELEASE_VERSION }}']
+            });
 
       - name: Auto approve PR
         env:
