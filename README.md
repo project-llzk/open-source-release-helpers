@@ -12,7 +12,10 @@ by this repository are as follows:
 - [`prepare-release`](.github/workflows/prepare-release.yml): Creates a full changelog for the release.
 - [`create-release-candidate`](.github/workflows/create-release-candidate.yml): Creates the version and tag for a new release.
 - [`create-release-pr`](.github/workflows/create-release-pr.yml): Creates a pull request to create the release.
-- [`release`](.github/workflows/release.yml): Finalizes the release and cleans up pre-release state.
+- [`release`](.github/workflows/release.yml): Finalizes the release from a merged release PR.
+
+The `release` workflow expects `release_pr_number` (caller passes `${{ github.event.pull_request.number }}`)
+and derives the release version from the PR labels and the target release commit from the PR merge commit.
 
 For an example of usage, refer to the [LLZK project repository](https://github.com/project-llzk/llzk-lib).
 

@@ -2,6 +2,11 @@ name: Release
 
 on:
   workflow_call:
+    inputs:
+      release_pr_number:
+        description: "The merged release PR number"
+        required: true
+        type: number
     outputs:
       status:
         description: "The status of the release"
@@ -15,43 +20,78 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       status: ${{ steps.status-check.outputs.status }}
-      version: ${{ steps.version.outputs.version }}
+      version: ${{ steps.release_pr.outputs.version }}
     steps:
+      - name: Locate release PR metadata
+        id: release_pr
+        uses: actions/github-script@v9
+        with:
+          github-token: ${{ secrets.RELEASE_APPROVER }}
+          script: |
+            const { owner, repo } = context.repo;
+            const prNumber = Number('${{ inputs.release_pr_number }}');
+            const versionPattern = /^v[0-9]+\.[0-9]+\.[0-9]+$/;
+
+            const { data: pull } = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: prNumber
+            });
+
+            if (!pull.merged) {
+              core.setFailed(`Release PR #${prNumber} has not been merged.`);
+              return;
+            }
+
+            if (pull.base.ref !== 'main') {
+              core.setFailed(`Release PR #${prNumber} targets '${pull.base.ref}', expected 'main'.`);
+              return;
+            }
+
+            if (!pull.merge_commit_sha) {
+              core.setFailed(`Release PR #${prNumber} does not have a merge commit SHA.`);
+              return;
+            }
+
+            const { data: labels } = await github.rest.issues.listLabelsOnIssue({
+              owner,
+              repo,
+              issue_number: prNumber
+            });
+            const labelNames = labels.map((label) => label.name);
+
+            if (!labelNames.includes('release')) {
+              core.setFailed(`Release PR #${prNumber} is missing the 'release' label.`);
+              return;
+            }
+
+            const versionLabels = labelNames.filter((label) => versionPattern.test(label));
+            if (versionLabels.length !== 1) {
+              core.setFailed(`Release PR #${prNumber} must have exactly one version label like 'v1.2.3'. Found: ${versionLabels.join(', ') || 'none'}.`);
+              return;
+            }
+
+            const version = versionLabels[0];
+            const expectedTitle = `Release ${version}`;
+            if (pull.title !== expectedTitle) {
+              core.setFailed(`Release PR #${prNumber} title must be '${expectedTitle}', found '${pull.title}'.`);
+              return;
+            }
+
+            core.exportVariable('RELEASE_VERSION', version);
+            core.exportVariable('RELEASE_COMMIT', pull.merge_commit_sha);
+            core.setOutput('version', version);
+            core.setOutput('commit', pull.merge_commit_sha);
+            core.setOutput('url', pull.html_url);
+
       - name: Check out repository code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Locate pre-release branch
-        id: branch_name
-        run: |
-          git config user.name ${{ github.actor	}}
-          git config user.email ${{ github.actor }}@users.noreply.github.com
-          git fetch
-          BRANCH_NAME=$(git branch -a | grep "pre-release")
-          BRANCH=${BRANCH_NAME##*/}
-          echo $BRANCH
-          echo "BRANCH=${BRANCH}" >> $GITHUB_ENV
-
-      - name: Locate version by pre-release branch
-        id: version
-        run: |
-          echo "${{ env.BRANCH }}"
-          echo "RELEASE_VERSION=$( echo ${{ env.BRANCH }} | cut -d "-" -f 1 )" >> $GITHUB_ENV
-          echo ${{ env.RELEASE_VERSION }}
-          echo "version=${{ env.RELEASE_VERSION }}" >> $GITHUB_OUTPUT
-
-      - name: Check out repository code
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ env.BRANCH }}
+          ref: ${{ steps.release_pr.outputs.commit }}
           fetch-depth: 0
           submodules: true
-          # The release bot must delete the pre-release branch
-          # to satisfy the branch protection rules.
           token: ${{ secrets.RELEASE_APPROVER }}
-          persist-credentials: true
+          persist-credentials: false
 
       - name: Check out release helper code
         uses: actions/checkout@v6
@@ -74,20 +114,25 @@ jobs:
       - name: Extract release changelog
         run: |
           mdsplit CHANGELOG.md --max-level 2 -o releaseJournal
-          RELEASE_CHANGES=$(find releaseJournal -name '*${{ env.RELEASE_VERSION }}*')
+          RELEASE_CHANGES=$(find releaseJournal -name "*${RELEASE_VERSION}*" -print -quit)
+          if [ -z "${RELEASE_CHANGES}" ]; then
+            echo "Could not locate changelog section for ${RELEASE_VERSION}."
+            exit 1
+          fi
           echo "RELEASE_CHANGES=${RELEASE_CHANGES}" >> $GITHUB_ENV
 
       - name: release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ env.RELEASE_VERSION }}
+          tag: ${{ steps.release_pr.outputs.version }}
           bodyFile: ${{ env.RELEASE_CHANGES }}
-          commit: ${{ github.sha }}
+          commit: ${{ steps.release_pr.outputs.commit }}
           token: ${{ secrets.RELEASE_APPROVER }}
           skipIfReleaseExists: true # make idempotent in case of retries
 
-      - name: Delete pre-release branch
-        run: git push -d origin ${{ env.BRANCH }}
+      - name: Set release status
+        id: status-check
+        run: echo "status=success" >> $GITHUB_OUTPUT
 
       - name: Write success summary
         run: |
